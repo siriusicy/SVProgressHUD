@@ -81,7 +81,11 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
     if (@available(iOS 13.0, *)) {
         for (UIWindowScene* windowScene in [UIApplication sharedApplication].connectedScenes) {
             if (windowScene.activationState == UISceneActivationStateForegroundActive) {
-                return windowScene.windows.firstObject;
+                for (UIWindow *w in windowScene.windows) {
+                    if (w.isKeyWindow) {
+                        return w;
+                    }
+                }
             }
         }
         // If a window has not been returned by now, the first scene's window is returned (regardless of activationState).
