@@ -36,7 +36,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
 @property (nonatomic, strong) NSTimer *graceTimer;
 @property (nonatomic, strong) NSTimer *fadeOutTimer;
 
-@property (nonatomic, strong) UIControl *controlView;
+@property (nonatomic, strong) UIButton *controlView; ///< 改成UIbutton,拦截父视图上的点击事件
 @property (nonatomic, strong) UIView *backgroundView;
 @property (nonatomic, strong) SVRadialGradientLayer *backgroundRadialGradientLayer;
 @property (nonatomic, strong) UIVisualEffectView *hudView;
@@ -515,6 +515,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
     // Add the overlay to the application window if necessary
     if(!self.controlView.superview) {
         if(self.containerView){
+            [self.containerView layoutIfNeeded];
             [self.containerView addSubview:self.controlView];
         } else {
 #if !defined(SV_APP_EXTENSIONS)
@@ -692,7 +693,8 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
 - (void)moveToPoint:(CGPoint)newCenter rotateAngle:(CGFloat)angle {
     self.hudView.transform = CGAffineTransformMakeRotation(angle);
     if (self.containerView) {
-        self.hudView.center = CGPointMake(self.containerView.center.x + self.offsetFromCenter.horizontal, self.containerView.center.y + self.offsetFromCenter.vertical);
+        self.hudView.center = CGPointMake(CGRectGetWidth(self.containerView.bounds) / 2.0 + self.offsetFromCenter.horizontal,
+                                          CGRectGetHeight(self.containerView.bounds) / 2.0 + self.offsetFromCenter.vertical);
     } else {
         self.hudView.center = CGPointMake(newCenter.x + self.offsetFromCenter.horizontal, newCenter.y + self.offsetFromCenter.vertical);
     }
@@ -1177,9 +1179,9 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
     }
 }
 
-- (UIControl*)controlView {
+- (UIButton *)controlView {
     if(!_controlView) {
-        _controlView = [UIControl new];
+        _controlView = [UIButton new];
         _controlView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _controlView.backgroundColor = [UIColor clearColor];
         _controlView.userInteractionEnabled = YES;
@@ -1192,6 +1194,13 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
 #else
     _controlView.frame = [UIScreen mainScreen].bounds;
 #endif
+    
+    if (self.containerView) {
+        _controlView.frame = self.containerView.bounds;
+        _controlView.clipsToBounds = YES;
+    } else {
+        _controlView.clipsToBounds = NO;
+    }
     
     return _controlView;
 }

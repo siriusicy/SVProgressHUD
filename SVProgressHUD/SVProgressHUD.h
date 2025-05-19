@@ -79,7 +79,7 @@ typedef void (^SVProgressHUDDismissCompletion)(void);
 @property (assign, nonatomic) SVProgressHUDAnimationType defaultAnimationType UI_APPEARANCE_SELECTOR;
 
 /// The container view used for displaying the HUD. If nil, the default window level is used.
-@property (strong, nonatomic, nullable) UIView *containerView;
+@property (weak, nonatomic, nullable) UIView *containerView;
 
 /// The minimum size for the HUD. Useful for maintaining a consistent size when the message might cause resizing.
 /// @discussion Default: CGSizeZero.
